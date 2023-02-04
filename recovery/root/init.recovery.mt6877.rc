@@ -1,4 +1,6 @@
+import /init.recovery.microtrust.rc
 on init
+<<<<<<< HEAD
     setprop sys.usb.configfs 1
 
 on fs && property:ro.debuggable=0
@@ -6,6 +8,12 @@ on fs && property:ro.debuggable=0
     write /sys/class/udc/musb-hdrc/device/cmode 2
     # set charging free due to it wait for USB activation
     start adbd
+=======
+    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw:/system/lib64/hw
+
+on fs
+    install_keyring
+>>>>>>> e4a834d (ruby: Import blobs for decryption)
 
 on post-fs
     # Support A/B feature for EMMC and UFS boot region
@@ -33,3 +41,56 @@ on post-fs
     symlink /dev/block/mapper/pl_b /dev/block/by-name/preloader_raw_b
     symlink /dev/block/mapper/pl_a /dev/block/platform/bootdevice/by-name/preloader_raw_a
     symlink /dev/block/mapper/pl_b /dev/block/platform/bootdevice/by-name/preloader_raw_b
+
+service keystore_auth /system/bin/keystore_auth
+    oneshot
+    user system
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service keystore /system/bin/keystore /tmp/misc/keystore
+    user root
+    group root drmrpc readproc log
+    disabled
+    seclabel u:r:recovery:s0
+
+service keymaster-4-1-beanpod /system/bin/android.hardware.keymaster@4.1-service.beanpod
+    user root
+    group root drmrpc
+    oneshot    
+    disabled
+    seclabel u:r:recovery:s0
+
+service gatekeeper-1-0 /system/bin/android.hardware.gatekeeper@1.0-service
+    user root
+    group root
+    oneshot
+    disabled
+    seclabel u:r:recovery:s0
+
+on property:hwservicemanager.ready=true
+    start teei_daemon
+    start keymaster-4-1-beanpod
+    start gatekeeper-1-0
+
+on property:ro.crypto.state=unsupported
+    stop teei_daemon
+    stop keymaster-4-1-beanpod
+    stop gatekeeper-1-0
+    stop servicemanager
+    stop hwservicemanager
+
+on property:ro.crypto.state=unencrypted
+    stop teei_daemon    
+    stop keymaster-4-1-beanpod
+    stop gatekeeper-1-0
+    stop servicemanager
+    stop hwservicemanager
+
+on property:twrp.decrypt.done=true
+    stop teei_daemon  
+    stop keymaster-4-1-beanpod
+    stop gatekeeper-1-0   
+    stop servicemanager
+    stop hwservicemanager
