@@ -64,8 +64,13 @@ endif
 
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+<<<<<<< HEAD
 BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
+=======
+#BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432 #Useless value
+#BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33554432
+>>>>>>> 4470038... Fixed TWRP not starting and first implementation of CRYPTO
 BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -80,8 +85,12 @@ BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 9122611200 # TODO: Fix hardcoded value
 TARGET_BOARD_PLATFORM := mt6877
 
 # Recovery
+<<<<<<< HEAD
 #BOARD_INCLUDE_RECOVERY_DTBO := true
 TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
+=======
+# TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
+>>>>>>> 4470038... Fixed TWRP not starting and first implementation of CRYPTO
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 # Recovery
@@ -110,6 +119,7 @@ TW_THEME := portrait_hdpi
 TW_EXTRA_LANGUAGES := true
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
+<<<<<<< HEAD
 TW_USE_TOOLBOX := true
 TW_MAX_BRIGHTNESS := 510
 TW_DEFAULT_BRIGHTNESS := 128
@@ -129,3 +139,20 @@ BOARD_USES_METADATA_PARTITION := true
 TW_INCLUDE_CRYPTO := false
 TW_INCLUDE_CRYPTO_FBE := false
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
+=======
+TW_USE_TOOLBOX := false
+TW_NEVER_UNMOUNT_SYSTEM := true
+TW_INCLUDE_REPACKTOOLS := true
+TW_DISABLE_TTF := true
+TW_EXCLUDE_MTP := true
+TW_HAS_NO_RECOVERY_PARTITION := true
+TW_EXCLUDE_SUPERSU := true
+TW_INCLUDE_LOGCAT := true
+
+# Crypto
+ TW_INCLUDE_CRYPTO := true
+ TW_CRYPTO_MNT_POINT := "/data"
+# TODO Rest of support
+ TW_CRYPTO_FS_OPTIONS := "noatime,nosuid,nodev,noauto_da_alloc,errors=panic,inlinecrypt wait,check,formattable,quota,latemount,resize,,reservedsize=256m,checkpoint=block,fileencryption=aes-256-xts:aes-256-cts:v2,keydirectory=/metadata/vold/metadata_encryption"
+ TW_CRYPTO_REAL_BLKDEV := "/dev/block/platform/bootdevice/by-name/userdata"
+>>>>>>> 4470038... Fixed TWRP not starting and first implementation of CRYPTO
