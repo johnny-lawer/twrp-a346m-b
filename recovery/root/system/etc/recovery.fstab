@@ -1,13 +1,51 @@
-# Android fstab file.
-#<src>                  <mnt_point>         <type>    <mnt_flags and options>                               <fs_mgr_flags>
-# The filesystem that contains the filesystem checker binary (typically /system) cannot
-# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
-system                  /system	            erofs     ro	                                                wait,logical,first_stage_mount
-vendor                  /vendor	            erofs     ro	                                                wait,logical,first_stage_mount
-system_dlkm             /system_dlkm        erofs     ro                                                    wait,logical,first_stage_mount
-vendor_dlkm             /vendor_dlkm        erofs     ro	                                                wait,logical,first_stage_mount
-product                 /product            erofs     ro	                                                wait,logical,first_stage_mount
-odm                     /odm                erofs     ro	                                                wait,logical,first_stage_mount
-/dev/block/by-name/metadata /metadata       ext4      noatime,nosuid,nodev,noauto_da_alloc,discard,journal_checksum,data=ordered,errors=panic,sync    wait,formattable,first_stage_mount,check
-/dev/block/by-name/userdata /data           f2fs      noatime,nosuid,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678,whint_mode=fs-based,inlinecrypt  latemount,wait,check,quota,reservedsize=128M,checkpoint=fs,fscompress,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,metadata_encryption=aes-256-xts:wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption
-/dev/block/by-name/misc /misc               emmc      defaults                                              defaults,first_stage_mount
+/system             erofs     system                                                    flags=display=system;logical
+/system             f2fs      system                                                    flags=display=system;logical
+/system             ext4      system                                                    flags=display=system;logical
+/vendor             erofs     vendor                                                    flags=display=vendor;logical
+/product            erofs     product                                                   flags=display=product;logical
+/odm                erofs     odm                                                       flags=display=odm;logical
+/boot               emmc      /dev/block/platform/bootdevice/by-name/boot               flags=display=boot
+/recovery           emmc      /dev/block/platform/bootdevice/by-name/recovery           flags=display=recovery
+# /data               f2fs      /dev/block/platform/bootdevice/by-name/userdata           flags=display=data
+/cache              ext4      /dev/block/platform/bootdevice/by-name/cache              flags=display=cache
+/efs                ext4      /dev/block/platform/bootdevice/by-name/sec_efs            flags=display=efs
+/carrier            ext4      /dev/block/platform/bootdevice/by-name/carrier            flags=display=carrier
+# /preload            ext4      /dev/block/platform/bootdevice/by-name/hidden             flags=display=preload
+#/misc               emmc      /dev/block/platform/bootdevice/by-name/misc               flags=display=misc
+# /metadata           ext4      /dev/block/platform/bootdevice/by-name/metadata           flags=display=metadata
+# /sdcard             sdfat     /dev/block/mmcblk1p1                                      flags=display=sdcard
+/modem              emmc      /dev/block/platform/bootdevice/by-name/apnhlos            flags=display=modem
+/mdm                emmc      /dev/block/platform/bootdevice/by-name/modem              flags=display=mdm
+/dsp                emmc      /dev/block/platform/bootdevice/by-name/dsp                flags=display=dsp
+/dtbo               emmc      /dev/block/platform/bootdevice/by-name/dtbo               flags=display=dtbo
+/md1img             emmc      /dev/block/platform/bootdevice/by-name/md1img             flags=display=md1img
+/spmfw              emmc      /dev/block/platform/bootdevice/by-name/spmfw              flags=display=spmfw
+/scp1               emmc      /dev/block/platform/bootdevice/by-name/scp1               flags=display=scp1
+/sspm_1             emmc      /dev/block/platform/bootdevice/by-name/sspm_1             flags=display=sspm_1
+# /keydata            ext4      /dev/block/platform/bootdevice/by-name/keydata            flags=display=keydata
+# /keyrefuge          f2fs      /dev/block/platform/bootdevice/by-name/keyrefuge          flags=display=keyrefuge
+/gz1                emmc      /dev/block/platform/bootdevice/by-name/gz1                flags=display=gz1
+/optics             ext4      /dev/block/platform/bootdevice/by-name/optics             flags=display=optics
+/prism              ext4      /dev/block/platform/bootdevice/by-name/prism              flags=display=prism
+/cam_vpu1           emmc      /dev/block/platform/bootdevice/by-name/cam_vpu1           flags=display=cam_vpu1
+/cam_vpu2           emmc      /dev/block/platform/bootdevice/by-name/cam_vpu2           flags=display=cam_vpu2
+/cam_vpu3           emmc      /dev/block/platform/bootdevice/by-name/cam_vpu3           flags=display=cam_vpu3
+/pi_img             emmc      /dev/block/platform/bootdevice/by-name/pi_img             flags=display=pi_img
+/vbmeta_samsung     emmc      /dev/block/platform/bootdevice/by-name/vbmeta_samsung     flags=display=vbmeta_samsung
+
+
+/system_image  emmc  /dev/block/mapper/system  flags=backup=0;flashimg=1;display="System Image"
+
+/vendor_image  emmc  /dev/block/mapper/vendor  flags=backup=0;flashimg=1;display="Vendor Image"
+
+/product_image  emmc  /dev/block/mapper/product  flags=backup=0\;flashimg=1\;display=\"Product Image\"";
+
+/odm_image  emmc  /dev/block/mapper/odm  flags=backup=0;flashimg=1;display="Odm Image"
+
+/dev/block/by-name/metadata                             /metadata              ext4    noatime,nosuid,nodev,discard                         wait,check,formattable,first_stage_mount
+/dev/block/bootdevice/by-name/userdata					/data				   f2fs	   noatime,nosuid,nodev,discard,inlinecrypt,reserve_root=32768,resgid=5678,fsync_mode=nobarrier 	latemount,wait,check,formattable,reservedsize=128M,checkpoint=fs
+/dev/block/bootdevice/by-name/misc                      /misc                  emmc    defaults                                             defaults
+
+# Removable partitions
+/external_sd	auto		/dev/block/mmcblk0p1	/dev/block/mmcblk0	flags=storage;wipeingui;removable
+/usb-otg	auto		/dev/block/sdf1		/dev/block/sdf		flags=storage;wipeingui;removable
